@@ -35,12 +35,12 @@ app.get("/api/:date", (req, res) => {
   const { date } = req.params;
 
   if (date) {
-    let unixKey = Date.parse(date).getTime() / 1000;
-    let dateObject = new Date(date);
-    let humanDateFormat = dateObject.toLocaleString();
+    // let unixKey = Date.parse(date).getTime() / 1000;
+    // let dateObject = new Date(date);
+    // let humanDateFormat = dateObject.toLocaleString();
     res.json({
-      unix: unixKey,
-      utc: humanDateFormat,
+      unix: date,
+      utc: date,
     });
   }
 });
