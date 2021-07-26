@@ -33,13 +33,14 @@ app.get("/api/hello", function (req, res) {
 
 app.get("/api/:date", (req, res) => {
   const { date } = req.params;
-
-  if (date) {
+  let regDateFormat = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/;
+  if (date.match(regDateFormat)) {
     // let unixKey = Date.parse(date).getTime() / 1000;
     // let dateObject = new Date(date);
     // let humanDateFormat = dateObject.toLocaleString();
+    let datum = Date.parse(date);
     res.json({
-      unix: date,
+      unix: datum / 1000,
       utc: date,
     });
   }
