@@ -33,7 +33,6 @@ app.get("/api/1451001600000", (req, res) => {
 
 app.get("/api/:date", (req, res) => {
   const { date } = req.params;
-
   res.json({ unix: date, utc: "Thu, 01 Jan 1970 00:00:00 GMT" });
 });
 
