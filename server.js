@@ -23,56 +23,53 @@ app.get("/api/hello", function (req, res) {
   res.json({ greeting: "hello API" });
 });
 
-// app.get("/api/2015-12-25", (req, res) => {
-//   res.json({ unix: 1451001600000, utc: "Fri, 25 Dec 2015 00:00:00 GMT" });
-// });
+app.get("/api", (req, res) => {
+  res.json({ unix: Date.now(), utc: Date() });
+});
 
-// app.get("/api/1451001600000", (req, res) => {
-//   res.json({ unix: 1451001600000, utc: "Fri, 25 Dec 2015 00:00:00 GMT" });
-// });
+app.get("/api/:date_string?", (req, res) => {
+  let { date_string } = req.params;
+  let isDate = new Date(date_string);
 
-app.get("/api/:date", (req, res) => {
-  const { date } = req.params;
-  let regDateFormat = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/;
-  if (date.match(regDateFormat)) {
-    // let unixKey = Date.parse(date).getTime() / 1000;
-    // let dateObject = new Date(date);
-    let datum = Date.parse(date);
-    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    const months = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ];
-    function appendLeadingZeroes(n) {
-      if (n <= 9) {
-        return "0" + n;
+  if (/\d{5,}/.test(date_string)) {
+    let numUnix = parseInt(date_string);
+    let unixToDate = new Date(numUnix).toUTCString();
+    res.json({ unix: numUnix, utc: unixToDate });
+  } else {
+    if (isDate) {
+      if (!isNaN(isDate.getTime())) {
+        let datum = Date.parse(date_string);
+        let humanDateFormat = new Date(datum);
+        let utcDate = humanDateFormat.toUTCString();
+        res.json({
+          unix: datum,
+          utc: `${utcDate}`,
+        });
+      } else {
+        res.json({
+          error: "invalid date",
+        });
       }
-      return n;
     }
-    let humanDateFormat = new Date(datum);
-    let day = days[humanDateFormat.getDay()];
-    let dateTime = appendLeadingZeroes(humanDateFormat.getDate());
-    let month = months[humanDateFormat.getMonth()];
-    let year = humanDateFormat.getFullYear();
-    let time = `${humanDateFormat.getHours()}:${humanDateFormat.getMinutes()}:${humanDateFormat.getSeconds()}`;
-
-    res.json({
-      unix: datum,
-      utc: `${day}, ${dateTime} ${month} ${year} ${time}`,
-    });
   }
 });
 
+// app.get("/api/:date_string?", (req, res) => {
+//   let dateString = req.params.date_string;
+//   if (/\d{5,}/.test(dateString)) {
+//     const dateInt = parseInt(dateString);
+
+//     res.json({ unix: dateInt, utc: new Date(dateInt).toUTCString() });
+//   } else {
+//     let dateObject = new Date(dateString);
+
+//     if (dateObject.toString() === "Invalid Date") {
+//       res.json({ error: "Invalid Date" });
+//     } else {
+//       res.json({ unix: dateObject.valueOf(), utc: dateObject.toUTCString() });
+//     }
+//   }
+// });
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
   console.log("Your app is listening on port " + listener.address().port);
