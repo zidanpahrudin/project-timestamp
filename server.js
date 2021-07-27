@@ -37,11 +37,38 @@ app.get("/api/:date", (req, res) => {
   if (date.match(regDateFormat)) {
     // let unixKey = Date.parse(date).getTime() / 1000;
     // let dateObject = new Date(date);
-    // let humanDateFormat = dateObject.toLocaleString();
     let datum = Date.parse(date);
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    function appendLeadingZeroes(n) {
+      if (n <= 9) {
+        return "0" + n;
+      }
+      return n;
+    }
+    let humanDateFormat = new Date(datum);
+    let day = days[humanDateFormat.getDay()];
+    let dateTime = appendLeadingZeroes(humanDateFormat.getDate());
+    let month = months[humanDateFormat.getMonth()];
+    let year = humanDateFormat.getFullYear();
+    let time = `${humanDateFormat.getHours()}:${humanDateFormat.getMinutes()}:${humanDateFormat.getSeconds()}`;
+
     res.json({
-      unix: datum / 1000,
-      utc: date,
+      unix: datum,
+      utc: `${day}, ${dateTime} ${month} ${year} ${time}`,
     });
   }
 });
